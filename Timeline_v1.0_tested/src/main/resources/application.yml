@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/timelinedb?useSSL=false&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_To_NULL&serverTimezone=Asia/Shanghai
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    show-sql: true
+  resources:
+    static-locations: classpath:/

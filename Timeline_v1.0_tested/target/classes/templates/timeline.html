@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SimpleGetMessage</title>
+    <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+
+</head>
+<body>
+    <div style="width: 540px;border: 2px solid #7699b8;margin: auto">
+        <div>
+            <h1 style="margin-left: 20px;width: 350px;float: left">Timeline</h1>
+            <button id="update" th:text="更新" onclick="getNewMessage()" style="height: 50px;width: 100px;font-size: 20px;float: left;margin-top: 18px;margin-left: 10px;border: 2px solid #7699b8;border-radius:5px;background-color: white"></button>
+        </div>
+        <div style="height: 600px;overflow: scroll;overflow-x: hidden;clear: both;border-top: 2px solid #7699b8">
+            <div id="content" ></div>
+
+            <div style="margin: auto;clear: both">
+                <button th:text="更多..." onclick="getMessage()" style="height: 50px;width: 100px;margin-left: 220px;margin-top: 10px;margin-bottom: 10px;font-size: 20px;border: 2px solid #7699b8;border-radius:5px;background-color: white"></button>
+            </div>
+        </div>
+    </div>
+
+    </div>
+</body>
+<script type="text/javascript">
+    var page = 0;
+
+
+    getMessage();
+    setInterval("getUpdate()", 10000);
+    var total=[[${size}]];
+    console.log(total);
+
+    function  getNewMessage() {
+        page=0;
+        $("#content").empty();
+        document.getElementById("update").innerHTML="更新";
+        getMessage();
+    }
+
+    function getUpdate() {
+        $.ajax({
+            type: "post",
+            url: "/update",
+            date: {},
+            async: false,
+            success: function(data) {
+                console.log(data);
+                var num = data - total;
+                console.log(num);
+                if(num > 0) {
+                    document.getElementById("update").innerHTML = num + "更新";
+                    total = data;
+                    console.log("new total"+total);
+                }
+            }
+        })
+    }
+
+    function getMessage() {
+        $.ajax({
+            type:"get",
+            url:"page",
+            data:{
+                "page":page
+            },
+            success:function (data) {
+                page++;
+                //  console.log(data);
+                var list=data.content;
+                var str='';
+                console.log(data);
+                console.log(list);
+
+               /* str+="<div id=\"content\" th:each=\"message:${list}\" style=\"width: 500px;padding: 10px;border-bottom: 2px dashed #7699b8\">"
+                str+="<div style=\"width: 400px;float:left\">"+"<p th:text=\"${message.name}\"></p></div>"
+                    +"<div style=\"width: 100px;float:left;text-align: right\">" + "<p th:text=\"${message.getTimeDifference()}\"></p></div>"
+                    + "<div style=\"width: 500px\">" + "<p th:text=\"${message.content}\"></p></div>"
+                    +"</div>"
+                    */
+                for(var i=0;i<list.length;i++){
+               /*
+               <div style="width: 400px;float:left">
+                        <p th:text="${message.name}"></p>
+                        </div>
+                        <div style="width: 100px;float:left;text-align: right">
+                        <p th:text="${message.getTimeDifference()}"></p>
+                        </div>
+                        <div style="width: 500px">
+                        <p th:text="${message.content}"></p>
+                        </div> */
+                    str+="<div style=\"width: 500px;padding: 10px;border-bottom: 2px dashed #7699b8\">";
+                    str+="<div style=\"width: 400px;float:left\">";
+                    str+="<p>"+list[i].name+"</p></div>";
+                    str+="<div style=\"width: 100px;float:left;text-align: right\">";
+                    str+="<p>"+list[i].timeDifference+"</p></div>";
+                    str+="<div style=\"width: 500px\">";
+                    str+="<p>"+list[i].content+"</p>";
+                    if(list[i].picture !== '')
+                        str+="<img src=\""+list[i].picture+"\" alt=\"picture01\" height=\"100px\" width=\"100px\"/>"
+                    str+="</div></div>";
+
+                }
+                $("#content").append(str);
+            }
+        })
+
+    }
+</script>
+</html>
