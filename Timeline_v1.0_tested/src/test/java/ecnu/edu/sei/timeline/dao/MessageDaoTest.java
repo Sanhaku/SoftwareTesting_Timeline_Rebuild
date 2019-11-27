@@ -1,6 +1,5 @@
 package ecnu.edu.sei.timeline.dao;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -9,28 +8,34 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class MessageDaoTest {
 
-    @Before
-    public void init(){
-    }
-
     @Test
-    void testGetTimeDifference() {//测试与当前时间的间隔
-        LocalDateTime localDateTime=LocalDateTime.parse("2019-11-11 08:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        MessageDao messageDao1 = new MessageDao(100, "royal", "never give up", "", localDateTime);
-        Assert.assertEquals("4天之前", messageDao1.getTimeDifference());
-
-        localDateTime=LocalDateTime.parse("2019-11-15 08:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        MessageDao messageDao2 = new MessageDao(100, "royal", "never give up", "", localDateTime);
-        Assert.assertEquals("8小时之前", messageDao2.getTimeDifference());
-
-        localDateTime=LocalDateTime.parse("2019-11-15 16:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        MessageDao messageDao3 = new MessageDao(100, "royal", "never give up", "", localDateTime);
-        Assert.assertEquals("30分钟之前", messageDao3.getTimeDifference());
-
+    void shouldGetTimeDifference() {
+        LocalDateTime time1=LocalDateTime.now().minusDays(1);
+        MessageDao messageDao = new MessageDao(100, "royal", "never give up", "", time1);
+       // messageDao.setCreateTime(localDateTime);
+        assertEquals("1天之前",messageDao.getTimeDifference());
+        LocalDateTime time2 = LocalDateTime.now().minusMonths(2);
+        messageDao.setCreateTime(time2);
+        assertEquals("2个月之前", messageDao.getTimeDifference());
+        LocalDateTime time3 = LocalDateTime.now().minusHours(2);
+        messageDao.setCreateTime(time3);
+        assertEquals("2小时之前", messageDao.getTimeDifference());
+        LocalDateTime time4 = LocalDateTime.now().minusMinutes(5);
+        messageDao.setCreateTime(time4);
+        assertEquals("5分钟之前", messageDao.getTimeDifference());
+        LocalDateTime time5 = LocalDateTime.now().minusSeconds(30);
+        messageDao.setCreateTime(time5);
+        assertEquals("刚刚", messageDao.getTimeDifference());
+        LocalDateTime time6 = LocalDateTime.now().minusYears(1);
+        messageDao.setCreateTime(time6);
+        assertEquals("1年之前", messageDao.getTimeDifference());
     }
 }
